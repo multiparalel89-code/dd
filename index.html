@@ -3,235 +3,265 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>120DIVISION | ULTRA WHITE</title>
+    <title>120 DIVISION | OFFICIAL</title>
+    
+    <!-- Шрифты и Стили -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Inter:wght@400;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;900&display=swap');
+        :root { --glass: rgba(255, 255, 255, 0.6); --border: rgba(255, 255, 255, 0.3); }
+        body { background: #f0f0f0; color: #000; font-family: 'Inter', sans-serif; overflow: hidden; }
         
-        :root {
-            --bg: #FFFFFF;
-            --surface: #FBFBFB;
-            --border: #EAECEF;
-            --accent: #000000;
-            --text-dim: #8E8E93;
+        /* Готический шрифт */
+        .gothic-text { font-family: 'Pirata One', cursive; font-size: 1.6rem; line-height: 1.2; color: #000; }
+
+        /* Эффект стекла */
+        .glass-card { 
+            background: var(--glass); 
+            backdrop-filter: blur(15px); 
+            border: 1px solid var(--border); 
+            border-radius: 24px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.05);
         }
 
-        body { 
-            background-color: var(--bg); 
-            color: var(--accent); 
-            font-family: 'Outfit', sans-serif; 
-            overflow: hidden; 
-        }
+        /* Узоры фона */
+        .pattern { position: absolute; border-radius: 50%; filter: blur(60px); z-index: -1; }
+        .p1 { width: 300px; height: 300px; background: #d1d1d1; top: -50px; right: -50px; }
+        .p2 { width: 250px; height: 250px; background: #e2e2e2; bottom: 100px; left: -50px; }
+        .p3 { width: 200px; height: 200px; background: #cccccc; top: 40%; left: 30%; }
 
-        /* Премиальные линии как в референсе */
-        .grid-line { border: 0.5px solid var(--border); }
-        .glass-panel { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border: 1px solid var(--border); }
-        
-        .sidebar { transition: all 0.4s cubic-bezier(0.65, 0, 0.35, 1); z-index: 1000; }
-        .sidebar.active { transform: translateX(0); }
+        /* Слайдер */
+        .swiper { width: 100%; height: 300px; border-radius: 15px; }
+        .swiper-slide img { width: 100%; height: 100%; object-fit: cover; }
 
-        .nav-link { font-size: 11px; letter-spacing: 0.15em; font-weight: 600; transition: 0.3s; color: var(--text-dim); }
-        .nav-link:hover { color: var(--accent); }
+        /* Меню */
+        #sidebar { transition: 0.4s cubic-bezier(0.85, 0, 0.15, 1); z-index: 1000; }
+        .nav-btn { font-weight: 900; letter-spacing: 2px; text-transform: uppercase; padding: 20px; border-bottom: 1px solid #eee; width: 100%; text-align: left; }
 
-        .chat-bubble { max-width: 80%; padding: 12px 16px; font-size: 13px; margin-bottom: 10px; border-radius: 14px; line-height: 1.5; }
-        .msg-u { background: var(--accent); color: white; align-self: flex-end; }
-        .msg-a { background: var(--surface); border: 1px solid var(--border); align-self: flex-start; }
-
-        .admin-menu { 
-            display: none; position: absolute; right: 0; top: 30px; 
-            background: white; box-shadow: 0 10px 40px rgba(0,0,0,0.08); 
-            border: 1px solid var(--border); z-index: 100; min-width: 160px;
-        }
-        .admin-menu button { width: 100%; text-align: left; padding: 12px 16px; font-size: 11px; font-weight: 600; border-bottom: 0.5px solid var(--border); }
-
-        /* Кастомные анимации */
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        section { animation: fadeIn 0.5s ease forwards; }
+        /* Соцсети */
+        .social-btn { width: 45px; height: 45px; background: #000; color: #fff; border-radius: 50%; display: flex; items-center: center; justify-content: center; transition: 0.3s; }
+        .social-btn:active { transform: scale(0.9); }
     </style>
 </head>
-<body class="flex flex-col h-screen">
+<body class="h-screen flex flex-col">
 
-    <!-- SIDEBAR -->
-    <div id="sidebar" class="sidebar fixed inset-y-0 left-0 w-full md:w-80 bg-white transform -translate-x-full border-r grid-line">
-        <div class="p-10 flex flex-col h-full">
-            <div class="flex justify-between items-center mb-20">
-                <img src="logo.png" class="h-6" alt="120DIVISION">
-                <button onclick="toggleSidebar()" class="text-gray-400"><i class="fa-solid fa-x"></i></button>
-            </div>
-            <nav class="space-y-8">
-                <button onclick="nav('profile')" class="nav-link flex items-center w-full uppercase"><span class="w-2 h-2 bg-black mr-4"></span> Профиль</button>
-                <button onclick="nav('shop')" class="nav-link flex items-center w-full uppercase"><span class="w-2 h-2 bg-gray-200 mr-4"></span> Магазин</button>
-                <button onclick="nav('support')" class="nav-link flex items-center w-full uppercase"><span class="w-2 h-2 bg-gray-200 mr-4"></span> Техподдержка</button>
-                <div id="adm-box" class="hidden pt-10 mt-10 border-t grid-line">
-                    <p class="text-[9px] text-gray-300 font-bold tracking-[0.4em] mb-6">ADMINISTRATION</p>
-                    <button onclick="nav('admin')" class="nav-link text-red-500 flex items-center w-full uppercase"><span class="w-2 h-2 bg-red-500 mr-4"></span> Заявки</button>
-                </div>
-            </nav>
+    <div class="pattern p1"></div>
+    <div class="pattern p2"></div>
+    <div class="pattern p3"></div>
+
+    <!-- Боковое меню -->
+    <div id="sidebar" class="fixed inset-y-0 left-0 w-full bg-white transform -translate-x-full">
+        <div class="p-8 flex justify-between items-center">
+            <img src="logo.png" class="h-8" alt="Logo">
+            <button onclick="toggleMenu()" class="text-2xl"><i class="fa-solid fa-xmark"></i></button>
         </div>
+        <nav class="mt-10">
+            <button onclick="show('home')" class="nav-btn">ГЛАВНАЯ</button>
+            <button onclick="show('profile')" class="nav-btn">ПРОФИЛЬ</button>
+            <button onclick="show('shop')" class="nav-btn">МАГАЗИН</button>
+            <button onclick="show('support')" class="nav-btn">ПОДДЕРЖКА</button>
+        </nav>
     </div>
 
-    <!-- HEADER -->
-    <header class="p-6 flex items-center justify-between border-b grid-line sticky top-0 bg-white z-50">
-        <button onclick="toggleSidebar()" class="text-xl"><i class="fa-solid fa-bars-staggered"></i></button>
-        <div class="text-[10px] font-black tracking-[0.5em] uppercase pl-4">120DIVISION</div>
-        <div class="w-10 h-10 rounded-full bg-[#F5F5F7] flex items-center justify-center text-[11px] font-bold" id="h-av">?</div>
+    <!-- Шапка -->
+    <header class="p-6 flex justify-between items-center z-50">
+        <button onclick="toggleMenu()" class="text-2xl"><i class="fa-solid fa-bars-staggered"></i></button>
+        <div class="font-black tracking-widest text-sm uppercase">120 DIVISION</div>
+        <div id="user-avatar" class="w-10 h-10 bg-black text-white rounded-full flex items-center justify-center font-bold">?</div>
     </header>
 
-    <!-- CONTENT -->
-    <main class="flex-1 overflow-y-auto relative">
+    <main class="flex-1 overflow-y-auto px-6 pb-20">
         
-        <!-- SECTION: PROFILE -->
-        <section id="s-profile" class="p-6 space-y-4">
-            <div class="p-10 border grid-line text-center bg-[#FCFCFD] relative overflow-hidden">
-                <div class="text-[120px] font-black opacity-[0.03] absolute -bottom-10 -right-10 leading-none">120</div>
-                <p class="text-[9px] tracking-[0.3em] text-gray-400 mb-4 uppercase">User Account</p>
-                <h2 id="u-name" class="text-3xl font-light tracking-tighter italic">Загрузка данных...</h2>
-                <div class="flex justify-center items-center mt-10 space-x-8">
-                    <div>
-                        <p class="text-[10px] text-gray-400 uppercase tracking-widest">ID</p>
-                        <p id="u-id" class="font-bold text-xs">00000000</p>
-                    </div>
-                    <div class="w-[1px] h-8 bg-gray-100"></div>
-                    <div>
-                        <p class="text-[10px] text-gray-400 uppercase tracking-widest">Status</p>
-                        <p class="font-bold text-xs text-green-500">Active</p>
-                    </div>
-                </div>
+        <!-- ГЛАВНАЯ -->
+        <section id="section-home" class="space-y-6">
+            <div class="glass-card p-8 mt-4">
+                <p class="gothic-text">
+                    120 DIVISION — Музыкальное движение из Минска.<br><br>
+                    Мы занимаемся:<br>
+                    • Сведением и мастерингом<br>
+                    • Битмейкингом<br>
+                    • Дизайном обложек<br>
+                    • Съемкой и монтажом видео.
+                </p>
+            </div>
+
+            <div class="flex justify-center space-x-4 py-4">
+                <a href="https://youtube.com/@120division?si=6unOjWLU7ZUiJCB5" class="social-btn"><i class="fa-brands fa-youtube"></i></a>
+                <a href="https://t.me/division120" class="social-btn"><i class="fa-brands fa-telegram"></i></a>
+                <a href="https://www.instagram.com/120division?igsh=anQxcGJxcWo3aDFz" class="social-btn"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://www.tiktok.com/@120division" class="social-btn"><i class="fa-brands fa-tiktok"></i></a>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4">
+                <div class="glass-card p-6 h-32 flex items-center justify-center font-black italic">ARTISTRY</div>
+                <div class="glass-card p-6 h-32 flex items-center justify-center font-black italic text-gray-400 uppercase">Production</div>
+                <div class="glass-card p-6 h-32 flex items-center justify-center font-black italic">Vision</div>
             </div>
         </section>
 
-        <!-- SECTION: SHOP -->
-        <section id="s-shop" class="hidden p-6 grid grid-cols-1 gap-10">
-            <div class="group cursor-pointer">
-                <div class="aspect-[4/5] bg-[#F5F5F7] overflow-hidden mb-6">
-                    <img src="https://via.placeholder.com/600x800?text=PRODUCT+1" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-</div>
-                <div class="flex justify-between items-end">
-                    <div>
-                        <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">Premium Edition</p>
-                        <h3 class="text-lg font-normal tracking-tighter">120D Minimalist Hoodie</h3>
-                    </div>
-                    <p class="font-bold text-lg italic">89 USDT</p>
-                </div>
-                <button class="w-full mt-6 py-4 border border-black text-[10px] font-black uppercase tracking-widest hover:bg-black hover:text-white transition-all">В корзину</button>
+        <!-- МАГАЗИН -->
+        <section id="section-shop" class="hidden space-y-6 pt-4">
+            <div id="admin-add-btn" class="hidden">
+                <button onclick="openAddModal()" class="w-full bg-black text-white p-4 font-black rounded-xl mb-6">+ ДОБАВИТЬ ТОВАР</button>
+            </div>
+            
+            <div id="products-list" class="space-y-10">
+                <!-- Товары появятся здесь -->
             </div>
         </section>
 
-        <!-- SECTION: SUPPORT -->
-        <section id="s-support" class="hidden h-full flex flex-col">
-            <div id="chat-win" class="flex-1 p-8 overflow-y-auto flex flex-col pb-40">
-                <div class="msg-a chat-bubble">Здравствуйте. Опишите ваш запрос. Мы ответим в ближайшее время.</div>
-            </div>
-            <div class="fixed bottom-0 w-full p-6 bg-white/90 backdrop-blur border-t grid-line flex items-center space-x-6">
-                <label class="text-gray-400"><i class="fa-solid fa-paperclip"></i><input type="file" id="f-in" class="hidden"></label>
-                <input type="text" id="m-in" placeholder="Запрос..." class="flex-1 bg-transparent border-b border-gray-100 py-2 text-xs font-medium focus:outline-none focus:border-black transition-all">
-                <button onclick="send()" class="text-[10px] font-black tracking-widest uppercase">Отправить</button>
+        <!-- ПРОФИЛЬ -->
+        <section id="section-profile" class="hidden pt-4">
+            <div class="glass-card p-10 text-center">
+                <h2 id="u-name" class="text-3xl font-black uppercase">User Name</h2>
+                <p id="u-id" class="text-gray-400 mt-2 font-bold tracking-widest">ID: 00000000</p>
             </div>
         </section>
 
-        <!-- SECTION: ADMIN -->
-        <section id="s-admin" class="hidden p-6 space-y-6">
-            <div class="flex items-center justify-between">
-                <h2 class="text-xs font-black tracking-[0.2em] uppercase">Active Tickets</h2>
-                <div class="w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+        <!-- ПОДДЕРЖКА -->
+        <section id="section-support" class="hidden h-full flex flex-col pt-4">
+            <div id="chat-box" class="flex-1 space-y-4 overflow-y-auto pb-40 px-2">
+                <div class="bg-gray-200 p-4 rounded-2xl rounded-bl-none text-sm font-bold max-w-[80%]">ЧЕМ МЫ МОЖЕМ ВАМ ПОМОЧЬ?</div>
             </div>
-            <div id="adm-list" class="space-y-4">
-                <div class="p-6 border grid-line flex justify-between items-center bg-[#FBFBFB] relative">
-                    <div>
-                        <p class="text-[9px] text-gray-400 font-bold uppercase tracking-widest">Ticket #992</p>
-                        <p class="text-xs font-semibold mt-1">Ожидание ответа пользователя...</p>
-                    </div>
-                    <div class="relative">
-                        <button onclick="toggleM('m1')" class="p-2 text-gray-300"><i class="fa-solid fa-ellipsis"></i></button>
-                        <div id="m1" class="admin-menu">
-                            <button onclick="aAct('CLOSE', '992')">ЗАКРЫТЬ ЗАЯВКУ</button>
-                            <button onclick="aAct('CODER', '992')" class="text-blue-500">ПЕРЕДАТЬ КОДЕРУ</button>
-                        </div>
-                    </div>
-                </div>
+            <div class="fixed bottom-0 left-0 w-full p-6 bg-white border-t flex items-center space-x-3">
+                <input type="text" id="chat-in" placeholder="Ваш вопрос..." class="flex-1 bg-gray-100 p-4 rounded-xl text-sm focus:outline-none">
+                <button onclick="sendMsg()" class="bg-black text-white p-4 rounded-xl"><i class="fa-solid fa-paper-plane"></i></button>
             </div>
         </section>
 
     </main>
 
-    <!-- FLOATING CHAT BTN -->
-    <button onclick="nav('support')" class="fixed bottom-32 right-10 w-12 h-12 bg-black text-white flex items-center justify-center shadow-2xl z-40 hover:scale-110 transition-transform">
-        <i class="fa-solid fa-plus"></i>
-    </button>
+    <!-- Модалка добавления -->
+    <div id="add-modal" class="fixed inset-0 bg-black/80 z-[2000] hidden flex items-center justify-center p-6">
+        <div class="bg-white w-full p-8 rounded-3xl space-y-4">
+            <h2 class="font-black">НОВЫЙ ТОВАР</h2>
+            <input type="text" id="p-title" placeholder="Название" class="w-full border p-4 rounded-xl">
+            <textarea id="p-imgs" placeholder="Ссылки на фото через запятую" class="w-full border p-4 rounded-xl h-32"></textarea>
+            <input type="text" id="p-price" placeholder="Цена" class="w-full border p-4 rounded-xl">
+            <div class="flex space-x-2">
+                <button onclick="saveProduct()" class="flex-1 bg-black text-white p-4 font-black rounded-xl">СОХРАНИТЬ</button>
+                <button onclick="closeAddModal()" class="flex-1 bg-gray-200 p-4 font-black rounded-xl text-xs">ОТМЕНА</button>
+            </div>
+        </div>
+    </div>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
         
-        // ID Админов и Кодера
-        const ADMINS = [8594633841]; 
-        const CODER = 8594633841;
-
+        const ADMIN_IDS = [12345678]; // ЗАМЕНИ НА СВОЙ ID
         const u = tg.initDataUnsafe?.user;
 
         if(u) {
-            document.getElementById('u-name').innerText = (u.first_name + ' ' + (u.last_name || '')).toUpperCase();
-            document.getElementById('u-id').innerText = u.id;
-            document.getElementById('h-av').innerText =u.first_name[0];
-            if(ADMINS.includes(u.id) || u.id === CODER) document.getElementById('adm-box').classList.remove('hidden');
+            document.getElementById('u-name').innerText = u.first_name.toUpperCase();
+            document.getElementById('u-id').innerText = 'ID: ' + u.id;
+            document.getElementById('user-avatar').innerText = u.first_name[0];
+            if(ADMIN_IDS.includes(u.id)) document.getElementById('admin-add-btn').classList.remove('hidden');
         }
 
-        function toggleSidebar() {
-            document.getElementById('sidebar').classList.toggle('translate-x-0');
+        function toggleMenu() {
+            const sb = document.getElementById('sidebar');
+            sb.classList.toggle('-translate-x-full');
         }
 
-        function nav(id) {
-            ['profile', 'shop', 'support', 'admin'].forEach(s => {
-                document.getElementById('s-' + s).classList.toggle('hidden', s !== id);
+        function show(id) {
+            ['home', 'shop', 'profile', 'support'].forEach(s => {
+                document.getElementById('section-' + s).classList.toggle('hidden', s !== id);
             });
-            document.getElementById('sidebar').classList.remove('translate-x-0');
-            if(id === 'support') loadChat();
+            toggleMenu();
+            if(id === 'shop') renderProducts();
+            if(id === 'support') renderChat();
         }
 
-        function toggleM(id) {
-            const menu = document.getElementById(id);
-            menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+        // --- МАГАЗИН ---
+        function openAddModal() { document.getElementById('add-modal').classList.remove('hidden'); }
+        function closeAddModal() { document.getElementById('add-modal').classList.add('hidden'); }
+
+        function saveProduct() {
+            const title = document.getElementById('p-title').value;
+            const imgs = document.getElementById('p-imgs').value.split(',');
+            const price = document.getElementById('p-price').value;
+            
+            if(!title || !price) return;
+
+            const products = JSON.parse(localStorage.getItem('products_120') || '[]');
+            products.push({ title, imgs, price });
+            localStorage.setItem('products_120', JSON.stringify(products));
+            
+            closeAddModal();
+            renderProducts();
         }
 
-        function send() {
-            const val = document.getElementById('m-in').value.trim();
-            if(!val) return;
-            const h = JSON.parse(localStorage.getItem('chat_120_v3') || '[]');
-            h.push({ r: 'u', t: val });
-            localStorage.setItem('chat_120_v3', JSON.stringify(h));
-            tg.sendData(JSON.stringify({ a: "MSG", text: val }));
-            document.getElementById('m-in').value = '';
-            loadChat();
+        function renderProducts() {
+            const list = document.getElementById('products-list');
+            const products = JSON.parse(localStorage.getItem('products_120') || '[]');
+            list.innerHTML = '';
+
+            products.forEach((p, idx) => {
+                const item = document.createElement('div');
+                item.className = 'space-y-4';
+                
+                let slides = '';
+                p.imgs.forEach(img => {
+                    slides += `<div class="swiper-slide"><img src="${img.trim()}"></div>`;
+                });
+
+                item.innerHTML = `
+                    <div class="swiper swiper-${idx}">
+                        <div class="swiper-wrapper">${slides}</div>
+                        <div class="swiper-pagination"></div>
+                    </div>
+                    <div class="p-2">
+                        <h3 class="gothic-text">${p.title}</h3>
+                        <p class="font-black text-xl mt-2">${p.price} RUB</p>
+                        <button class="w-full bg-black text-white p-4 font-black rounded-xl mt-4 uppercase text-xs">Заказать</button>
+                    </div>
+                `;
+                list.appendChild(item);
+                
+                new Swiper(`.swiper-${idx}`, {
+                    pagination: { el: '.swiper-pagination' },
+                });
+            });
         }
 
-        function loadChat() {
-            const win = document.getElementById('chat-win');
-            const h = JSON.parse(localStorage.getItem('chat_120_v3') || '[]');
-            win.innerHTML = '<div class="msg-a chat-bubble">Здравствуйте. Опишите ваш запрос.</div>';
-            h.forEach(m => {
+        // --- ЧАТ ---
+        function sendMsg() {
+            const cin = document.getElementById('chat-in');
+            if(!cin.value) return;
+            const history = JSON.parse(localStorage.getItem('chat_120') || '[]');
+            history.push({ r: 'u', t: cin.value });
+            localStorage.setItem('chat_120', JSON.stringify(history));
+            
+            // Если бот включен, он получит данные:
+            tg.sendData(JSON.stringify({ a: "MSG", text: cin.value }));
+            
+            cin.value = '';
+            renderChat();
+        }
+
+        function renderChat() {
+            const box = document.getElementById('chat-box');
+            const history = JSON.parse(localStorage.getItem('chat_120') || '[]');
+            box.innerHTML = '<div class="bg-gray-200 p-4 rounded-2xl rounded-bl-none text-sm font-bold max-w-[80%] uppercase">ЧЕМ МЫ МОЖЕМ ВАМ ПОМОЧЬ?</div>';
+            history.forEach(m => {
                 const d = document.createElement('div');
-                d.className = `chat-bubble ${m.r === 'u' ? 'msg-u' : 'msg-a'}`;
-                d.innerText = m.t;
-                win.appendChild(d);
+                d.className = m.r === 'u' 
+                    ? 'bg-black text-white p-4 rounded-2xl rounded-br-none text-sm font-bold max-w-[80%] self-end ml-auto'
+                    : 'bg-gray-200 p-4 rounded-2xl rounded-bl-none text-sm font-bold max-w-[80%]';
+                d.innerText = m.t.toUpperCase();
+                box.appendChild(d);
             });
-            win.scrollTop = win.scrollHeight;
+            box.scrollTop = box.scrollHeight;
         }
 
-        function aAct(type, id) {
-            tg.showConfirm(`ПОДТВЕРДИТЕ: ${type}?`, (ok) => {
-                if(ok) tg.sendData(JSON.stringify({ a: "ADMIN", type: type, ticket: id }));
-            });
-        }
-        
-        // Закрытие меню при клике в сторону
-        window.onclick = function(e) {
-            if (!e.target.matches('.fa-ellipsis')) {
-                const drops = document.querySelectorAll(".admin-menu");
-                drops.forEach(d => d.style.display = "none");
-            }
-        }
+        // Рендерим магазин при загрузке
+        renderProducts();
     </script>
 </body>
 </html>
