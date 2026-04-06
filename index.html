@@ -1,297 +1,156 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>120 DIVISION | PREMIUM</title>
-    
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Pirata+One&family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>120 DIVISION</title>
 
-    <style>
-        :root { 
-            --glass: rgba(255, 255, 255, 0.7); 
-            --glass-border: rgba(255, 255, 255, 0.4); 
-            --accent: #000;
-        }
-        
-        body { 
-            background: #fcfcfc; 
-            color: #000; 
-            font-family: 'Inter', sans-serif; 
-            overflow: hidden; 
-            letter-spacing: -0.02em;
-        }
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Pirata+One&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
 
-        /* Gothic Font for specific text */
-        .gothic { font-family: 'Pirata One', cursive; font-size: 1.4rem; color: #000; line-height: 1.3; }
+<style>
+:root {
+  --bg:#2C2C2C;
+  --surface:#363636;
+  --text:#E0E0E0;
+  --muted:#999;
+  --accent:#EF4444;
+  --shadow-light:#3a3a3a;
+  --shadow-dark:#1f1f1f;
+}
 
-        /* Apple-style Glassmorphism */
-        .glass { 
-            background: var(--glass); 
-            backdrop-filter: blur(25px) saturate(180%); 
-            -webkit-backdrop-filter: blur(25px) saturate(180%);
-            border: 0.5px solid var(--glass-border);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-        }
+body[data-theme="light"] {
+  --bg:#E0E0E0;
+  --surface:#F0F0F0;
+  --text:#111;
+  --muted:#555;
+  --accent:#000;
+  --shadow-light:#fff;
+  --shadow-dark:#bcbcbc;
+}
 
-        /* Studio Slider */
-        .studio-swiper { width: 100%; height: 350px; border-radius: 0 0 40px 40px; overflow: hidden; }
-        .studio-swiper img { width: 100%; height: 100%; object-fit: cover; }
+body{
+  font-family:Inter;
+  background:var(--bg);
+  color:var(--text);
+  transition:.3s;
+}
 
-        /* Patterns (Decorative glass circles) */
-        .pattern { position: absolute; border-radius: 50%; filter: blur(80px); z-index: -1; opacity: 0.4; }
-        .p1 { width: 400px; height: 400px; background: #e0e0e0; top: -100px; right: -100px; }
-        .p2 { width: 300px; height: 300px; background: #d6d6d6; bottom: 50px; left: -50px; }
+/* neumorphism */
+.neu{
+  background:var(--surface);
+  border-radius:22px;
+  box-shadow:8px 8px 18px var(--shadow-dark),
+             -8px -8px 18px var(--shadow-light);
+}
+.neu-inset{
+  background:var(--bg);
+  border-radius:18px;
+  box-shadow:inset 6px 6px 12px var(--shadow-dark),
+             inset -6px -6px 12px var(--shadow-light);
+}
 
-        /* Social Buttons */
-        .social-link { 
-            width: 50px; height: 50px; border-radius: 50%; background: #000; color: #fff; 
-            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
-            transition: all 0.3s;
-        }
-        .social-link:active { transform: scale(0.9); background: #333; }
+/* animation */
+.fade{animation:fade .3s;}
+@keyframes fade{from{opacity:0;transform:translateY(10px)}}
 
-        /* Sidebar Glass */
-        #sidebar { 
-            transition: 0.5s cubic-bezier(0.19, 1, 0.22, 1); 
-            z-index: 2000;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(40px);
-        }
+/* toast */
+.toast{
+  position:fixed;top:80px;left:50%;
+  transform:translateX(-50%);
+  background:var(--surface);
+  padding:10px 20px;
+  border-radius:12px;
+  box-shadow:6px 6px 12px var(--shadow-dark),
+             -6px -6px 12px var(--shadow-light);
+}
 
-        .nav-item { 
-            padding: 25px 35px; border-bottom: 0.5px solid #eee; 
-            font-weight: 800; font-size: 0.75rem; letter-spacing: 0.2em; text-transform: uppercase;
-        }
-
-        ::-webkit-scrollbar { width: 0px; }
-    </style>
+.section{display:none}
+.section.active{display:block}
+</style>
 </head>
-<body class="h-screen flex flex-col">
 
-    <div class="pattern p1"></div>
-    <div class="pattern p2"></div>
+<body data-theme="dark">
 
-    <!-- SIDEBAR -->
-    <div id="sidebar" class="fixed inset-y-0 left-0 w-full transform -translate-x-full">
-        <div class="p-8 flex justify-between items-center border-b border-gray-100">
-            <span class="font-black tracking-[0.3em] text-xs">MENU</span>
-            <button onclick="toggleMenu()" class="text-xl"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <nav class="flex flex-col">
-            <button onclick="show('home')" class="nav-item text-left">MAIN HUB</button>
-            <button onclick="show('shop')" class="nav-item text-left text-gray-400">BOUTIQUE</button>
-            <button onclick="show('profile')" class="nav-item text-left">PERSONAL ID</button>
-            <button onclick="show('support')" class="nav-item text-left">CONCIERGE</button>
-        </nav>
-    </div>
+<!-- HEADER -->
+<header class="fixed top-0 w-full p-4 neu flex justify-between z-50">
+<div></div>
+<b class="tracking-widest">120 DIVISION</b>
+<div id="avatar" class="w-10 h-10 neu rounded-full flex items-center justify-center"></div>
+</header>
 
-    <!-- HEADER -->
-    <header class="fixed top-0 w-full p-6 flex justify-between items-center z-[100] transition-all" id="main-header">
-        <button onclick="toggleMenu()" class="w-10 h-10 glass rounded-full flex items-center justify-center"><i class="fa-solid fa-bars-staggered"></i></button>
-        <div class="font-black tracking-[0.4em] text-[10px] uppercase">120 DIVISION</div>
-        <div id="h-av" class="w-10 h-10 bg-black text-white rounded-full flex items-center justify-center font-bold text-xs">?</div>
-    </header>
+<!-- MAIN -->
+<main class="pt-20 pb-24 px-4 space-y-6">
 
-    <main class="flex-1 overflow-y-auto pb-32">
-        
-        <!-- HOME SECTION -->
-        <section id="s-home" class="space-y-8">
-            <!-- Studio Slider -->
-            <div class="swiper studio-swiper shadow-2xl">
-                <div class="swiper-wrapper">
-                    <div class="swiper-slide"><img src="studio1.jpg" onerror="this.src='https://via.placeholder.com/800x1000?text=STUDIO+PHOTO+1'"></div>
-                    <div class="swiper-slide"><img src="studio2.jpg" onerror="this.src='https://via.placeholder.com/800x1000?text=STUDIO+PHOTO+2'"></div>
-                    <div class="swiper-slide"><img src="studio3.jpg" onerror="this.src='https://via.placeholder.com/800x1000?text=STUDIO+PHOTO+3'"></div>
-                </div>
-                <div class="swiper-pagination"></div>
-            </div>
+<!-- HOME -->
+<section id="home" class="section active fade">
 
-            <div class="px-6 space-y-8">
-                <!-- About Card -->
-                <div class="glass p-8 rounded-[40px]">
-                    <p class="gothic">
-                        120 DIVISION — Музыкальное движение из Минска.<br><br>
-                        Мы занимаемся:<br>
-                        • Сведением и мастерингом<br>
-                        • Битмейкингом<br>
-                        • Дизайном обложек<br>
-                        • Съемкой и монтажом видео.
-                    </p>
-                </div>
+<div class="swiper rounded-b-[40px] overflow-hidden">
+<div class="swiper-wrapper">
+<div class="swiper-slide"><img src="https://picsum.photos/500/300?1"/></div>
+<div class="swiper-slide"><img src="https://picsum.photos/500/300?2"/></div>
+</div>
+</div>
 
-                <!-- Socials -->
-                <div class="flex justify-center space-x-5 py-4">
-                    <a href="https://youtube.com/@120division?si=6unOjWLU7ZUiJCB5" class="social-link"><i class="fa-brands fa-youtube"></i></a>
-<a href="https://t.me/division120" class="social-link"><i class="fa-brands fa-telegram"></i></a>
-                    <a href="https://www.instagram.com/120division?igsh=anQxcGJxcWo3aDFz" class="social-link"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="https://www.tiktok.com/@120division" class="social-link"><i class="fa-brands fa-tiktok"></i></a>
-                </div>
+<div class="neu p-5 text-lg" style="font-family:Pirata One">
+120 DIVISION — Музыкальное движение из Минска
+</div>
 
-                <!-- Glass Grid (Visual Anchors) -->
-                <div class="grid grid-cols-1 gap-4">
-                    <div class="glass h-32 rounded-[30px] flex items-center justify-center font-bold text-xs tracking-widest uppercase italic">High Fidelity Sound</div>
-                    <div class="glass h-32 rounded-[30px] flex items-center justify-center font-bold text-xs tracking-widest uppercase italic text-gray-300">Visual Mastery</div>
-                    <div class="glass h-32 rounded-[30px] flex items-center justify-center font-bold text-xs tracking-widest uppercase italic">Minsk Division</div>
-                </div>
-            </div>
-        </section>
+</section>
 
-        <!-- SHOP SECTION -->
-        <section id="s-shop" class="hidden px-6 pt-24 space-y-10">
-            <div id="adm-btn" class="hidden">
-                <button onclick="openM()" class="w-full bg-black text-white p-5 rounded-2xl font-black text-xs tracking-widest">+ ADD PRODUCT</button>
-            </div>
-            <div id="p-list" class="space-y-12 pb-20">
-                <!-- Products -->
-            </div>
-        </section>
+<!-- SHOP -->
+<section id="shop" class="section fade">
+<div id="products" class="space-y-4"></div>
+<button id="addBtn" class="neu p-4 w-full hidden">+ Добавить</button>
+</section>
 
-        <!-- SUPPORT SECTION -->
-        <section id="s-support" class="hidden h-full flex flex-col pt-24">
-            <div id="chat-win" class="flex-1 px-6 space-y-4 overflow-y-auto pb-40">
-                <div class="glass p-5 rounded-3xl rounded-bl-none text-xs font-bold max-w-[85%]">HOW CAN WE ASSIST YOU TODAY?</div>
-            </div>
-            <div class="fixed bottom-0 left-0 w-full p-6 glass border-t border-white flex items-center space-x-3">
-                <input type="text" id="m-in" placeholder="Inquiry..." class="flex-1 bg-transparent border-b border-gray-200 py-3 text-sm focus:outline-none focus:border-black transition-all">
-                <button onclick="send()" class="w-12 h-12 bg-black text-white rounded-full flex items-center justify-center shadow-lg"><i class="fa-solid fa-arrow-up"></i></button>
-            </div>
-        </section>
+<!-- CHAT USER -->
+<section id="chat" class="section fade">
+<div id="chatBox" class="h-80 overflow-y-auto space-y-2"></div>
+<div class="flex gap-2">
+<input id="msg" class="neu-inset flex-1 p-3"/>
+<button onclick="sendMsg()" class="neu px-4">→</button>
+</div>
+</section>
 
-        <!-- PROFILE SECTION -->
-        <section id="s-profile" class="hidden px-6 pt-24">
-            <div class="glass p-12 rounded-[50px] text-center">
-                <h2 id="u-nm" class="text-3xl font-black italic tracking-tighter">?</h2>
-                <p id="u-id" class="text-[10px] text-gray-400 font-bold tracking-[0.4em] mt-4 uppercase">ID: 00000000</p>
-            </div>
-        </section>
+<!-- PROFILE -->
+<section id="profile" class="section fade space-y-4">
+<div class="neu p-4 text-center">
+<div id="pAvatar" class="w-16 h-16 mx-auto neu rounded-full flex items-center justify-center"></div>
+<h2 id="name"></h2>
+</div>
 
-    </main>
+<div class="neu p-4">
+<b>Корзина</b>
+<div id="cart"></div>
+</div>
 
-    <!-- ADMIN MODAL -->
-    <div id="modal" class="fixed inset-0 bg-white/90 backdrop-blur-3xl z-[3000] hidden flex items-center justify-center p-8">
-        <div class="w-full space-y-6">
-            <h2 class="font-black text-2xl italic tracking-tighter">NEW RELEASE</h2>
-            <input type="text" id="t-in" placeholder="TITLE" class="w-full border-b border-black py-4 text-sm font-bold focus:outline-none">
-            <textarea id="i-in" placeholder="IMAGE LINKS (COMMA SEPARATED)" class="w-full border-b border-black py-4 text-sm font-bold focus:outline-none h-20"></textarea>
-            <input type="text" id="pr-in" placeholder="PRICE" class="w-full border-b border-black py-4 text-sm font-bold focus:outline-none">
-            <div class="flex flex-col space-y-3 pt-6">
-                <button onclick="save()" class="bg-blacktext-white p-5 font-black text-xs tracking-widest rounded-full">CONFIRM</button>
-                <button onclick="closeM()" class="p-5 font-black text-[10px] tracking-widest uppercase">Cancel</button>
-            </div>
-        </div>
-    </div>
+<div class="neu p-4 flex justify-between">
+Сменить тему
+<button onclick="toggleTheme()">🌗</button>
+</div>
+</section>
 
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
-        
-        // ADMIN SETTINGS
-        const ADMINS = [8594633841]; 
-        const u = tg.initDataUnsafe?.user;
+<!-- ADMIN -->
+<section id="admin" class="section fade">
+<div id="dialogs"></div>
+<div id="adminChat" class="hidden">
+<div id="adminMsgs" class="h-80 overflow-y-auto"></div>
+<input id="adminInput" class="neu-inset w-full p-3 mt-2"/>
+<button onclick="adminSend()" class="neu w-full mt-2">Отправить</button>
+</div>
+</section>
 
-        if(u) {
-            document.getElementById('u-nm').innerText = u.first_name.toUpperCase();
-            document.getElementById('u-id').innerText = 'ID: ' + u.id;
-            document.getElementById('h-av').innerText = u.first_name[0].toUpperCase();
-            if(ADMINS.includes(u.id)) document.getElementById('adm-btn').classList.remove('hidden');
-        }
+</main>
 
-        // SWIPERS
-        new Swiper('.studio-swiper', {
-            pagination: { el: '.swiper-pagination', clickable: true },
-            autoplay: { delay: 4000 },
-            speed: 800
-        });
-
-        function toggleMenu() {
-            document.getElementById('sidebar').classList.toggle('-translate-x-full');
-        }
-
-        function show(id) {
-            ['home', 'shop', 'profile', 'support'].forEach(s => {
-                document.getElementById('s-' + s).classList.toggle('hidden', s !== id);
-            });
-            toggleMenu();
-            if(id === 'shop') renderP();
-            if(id === 'support') renderC();
-            document.getElementById('main-header').style.background = id === 'home' ? 'transparent' : 'rgba(255,255,255,0.7)';
-        }
-
-        // SHOP LOGIC
-        function openM() { document.getElementById('modal').classList.remove('hidden'); }
-        function closeM() { document.getElementById('modal').classList.add('hidden'); }
-
-        function save() {
-            const t = document.getElementById('t-in').value;
-            const imgs = document.getElementById('i-in').value.split(',');
-            const pr = document.getElementById('pr-in').value;
-            if(!t || !pr) return;
-            const items = JSON.parse(localStorage.getItem('120d_items') || '[]');
-            items.push({ t, imgs, pr });
-            localStorage.setItem('120d_items', JSON.stringify(items));
-            closeM(); renderP();
-        }
-
-        function renderP() {
-            const list = document.getElementById('p-list');
-            const items = JSON.parse(localStorage.getItem('120d_items') || '[]');
-            list.innerHTML = '';
-            items.forEach((p, idx) => {
-                const el = document.createElement('div');
-                el.className = 'space-y-6';
-                let slides = '';
-                p.imgs.forEach(img => slides += `<div class="swiper-slide"><img src="${img.trim()}" class="w-full h-96 object-cover rounded-[30px]"></div>`);
-                el.innerHTML = `
-                    <div class="swiper sp-${idx}">${slides}</div>
-                    <div class="px-2 flex justify-between items-end">
-                        <div>
-                            <h3 class="gothic">${p.t}</h3>
-                            <p class="font-black text-xl italic mt-1">${p.pr} RUB</p>
-                        </div>
-                        <button class="bg-black text-white px-8 py-4 rounded-full font-black text-[9px] tracking-widest uppercase">ORDER</button>
-                    </div>
-                `;
-                list.appendChild(el);
-                new Swiper(`.sp-${idx}`, { spaceBetween: 10 });
-            });
-        }
-
-        function send() {
-            const i = document.getElementById('m-in');
-            if(!i.value) return;
-            const h = JSON.parse(localStorage 
-.getItem('120d_chat') || '[]');
-            h.push({ r: 'u', t: i.value });
-            localStorage.setItem('120d_chat', JSON.stringify(h));
-            tg.sendData(JSON.stringify({ a: "MSG", text: i.value }));
-            i.value = ''; renderC();
-        }
-
-        function renderC() {
-            const win = document.getElementById('chat-win');
-            const h = JSON.parse(localStorage.getItem('120d_chat') || '[]');
-            win.innerHTML = '<div class="glass p-5 rounded-3xl rounded-bl-none text-xs font-bold max-w-[85%]">HOW CAN WE ASSIST YOU TODAY?</div>';
-            h.forEach(m => {
-                const d = document.createElement('div');
-                d.className = m.r === 'u' 
-                    ? 'bg-black text-white p-5 rounded-3xl rounded-br-none text-xs font-bold max-w-[85%] self-end ml-auto'
-                    : 'glass p-5 rounded-3xl rounded-bl-none text-xs font-bold max-w-[85%]';
-                d.innerText = m.t.toUpperCase();
-                win.appendChild(d);
-            });
-            win.scrollTop = win.scrollHeight;
-        }
-
-        renderP();
-    </script>
-</body>
-</html>
+<!-- NAV -->
+<nav class="fixed bottom-0 w-full flex justify-around p-3 neu">
+<button onclick="nav('home')"><i class="fa fa-house"></i></button>
+<button onclick="nav('shop')"><i class="fa fa-bag-shopping"></i></button>
+<button onclick="nav('chat')"><i class="fa fa-comment"></i></button>
+<button onclick="nav('profile')"><i class="fa fa-user"></i></button>
 <button id="adminBtn" onclick="nav('admin')" class="hidden"><i class="fa fa-shield"></i></button>
 </nav>
 
