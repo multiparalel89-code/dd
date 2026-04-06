@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Support Pro Exchange Style</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        
+        body { 
+            background-color: #FFFFFF; 
+            color: #1E2329; 
+            font-family: 'Inter', sans-serif; 
+            overflow: hidden; 
+        }
+
+      
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #EAECEF; border-radius: 10px; }
+
+        .tab-active { 
+            color: #00BAF2; 
+            border-bottom: 2px solid #00BAF2; 
+        }
+
+        .chat-bubble-user { 
+            background-color: #00BAF2; 
+            color: #FFFFFF; 
+            border-radius: 12px 12px 2px 12px; 
+        }
+
+        .chat-bubble-admin { 
+            background-color: #F5F5F5; 
+            color: #1E2329; 
+            border-radius: 12px 12px 12px 2px; 
+            border: 1px solid #EAECEF;
+        }
+
+        .input-shadow {
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body class="flex flex-col h-screen">
+
+   
+    <nav class="flex justify-around border-b border-gray-100 bg-white sticky top-0 z-50">
+        <button onclick="switchTab('chat')" id="tab-chat" class="py-4 text-sm font-semibold flex-1 tab-active transition-all">
+            ПОДДЕРЖКА
+        </button>
+        <button onclick="switchTab('profile')" id="tab-profile" class="py-4 text-sm font-semibold flex-1 text-gray-400 transition-all">
+            ПРОФИЛЬ
+        </button>
+    </nav>
+
+   
+    <main class="flex-1 overflow-hidden relative">
+        
+      
+        <section id="section-chat" class="h-full flex flex-col p-4 overflow-y-auto pb-24 space-y-4">
+            <div class="chat-bubble-admin self-start max-w-[85%] p-4 text-sm shadow-sm">
+                <b>Здравствуйте! Опишите ваш вопрос или проблему. Мы ответим в ближайшее время.</b>
+            </div>
+          
+        </section>
+
+       
+        <section id="section-profile" class="hidden h-full p-6 bg-gray-50 space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center">
+                <div class="w-20 h-20 bg-blue-100 text-blue-500 rounded-full flex items-center justify-center text-2xl font-bold mb-4">
+                    <span id="user-initials">U</span>
+                </div>
+                <h2 class="text-xl font-bold uppercase" id="user-name">User Name</h2>
+                <p class="text-gray-400 text-xs mt-1 font-medium uppercase tracking-wider" id="user-id">ID: 00000000</p>
+            </div>
+
+            <div class="space-y-3">
+                <div class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center">
+                    <span class="text-sm font-medium text-gray-500">СТАТУС ТИКЕТА</span>
+                    <span class="text-xs font-bold text-green-500 px-2 py-1 bg-green-50 rounded uppercase">Активен</span>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center">
+                    <span class="text-sm font-medium text-gray-500">СРЕДНЕЕ ВРЕМЯ ОТВЕТА</span>
+                    <span class="text-xs font-bold text-gray-800 uppercase">~15 МИНУТ</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer id="input-footer" class="bg-white p-4 input-shadow border-t border-gray-100 fixed bottom-0 w-full">
+        <div class="flex items-center space-x-3">
+            <button class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-blue-500 transition-colors">
+                <i class="fa-solid fa-plus text-xl"></i>
+            </button>
+            <div class="flex-1 relative">
+                <input type="text" id="main-input" placeholder="Введите ваше сообщение..." 
+                       class="w-full bg-gray-100 rounded-xl py-3 px-4 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 transition-all">
+            </div>
+            <button onclick="handleSend()" class="w-10 h-10 flex items-center justify-center text-blue-500 hover:scale-110 transition-transform">
+                <i class="fa-solid fa-paper-plane text-xl"></i>
+            </button>
+        </div>
+    </footer>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+        tg.ready();
+
+       
+        const user = tg.initDataUnsafe.user;
+        if (user) {
+            document.getElementById('user-name').innerText = user.first_name + (user.last_name ? ' ' + user.last_name : '');
+            document.getElementById('user-id').innerText = 'ID: ' + user.id;
+            document.getElementById('user-initials').innerText = user.first_name.charAt(0).toUpperCase();
+        }
+
+        // Переключение табов
+        function switchTab(tab) {
+            const chatSec = document.getElementById('section-chat');
+            const profSec = document.getElementById('section-profile');
+            const chatTab = document.getElementById('tab-chat');
+            const profTab = document.getElementById('tab-profile');
+            const footer = document.getElementById('input-footer');
+
+            if (tab === 'chat') {
+                chatSec.classList.remove('hidden');
+                profSec.classList.add('hidden');
+                chatTab.classList.add('tab-active');
+                chatTab.classList.remove('text-gray-400');
+                profTab.classList.add('text-gray-400');
+                profTab.classList.re
+move('tab-active');
+                footer.classList.remove('hidden');
+            } else {
+                chatSec.classList.add('hidden');
+                profSec.classList.remove('hidden');
+                profTab.classList.add('tab-active');
+                profTab.classList.remove('text-gray-400');
+                chatTab.classList.add('text-gray-400');
+                chatTab.classList.remove('tab-active');
+                footer.classList.add('hidden');
+            }
+        }
+
+    
+        function handleSend() {
+            const input = document.getElementById('main-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+          
+            const chatBox = document.getElementById('section-chat');
+            const newMsg = document.createElement('div');
+            newMsg.className = 'chat-bubble-user self-end max-w-[85%] p-4 text-sm shadow-sm';
+            newMsg.innerHTML = `<b>${text}</b>`;
+            chatBox.appendChild(newMsg);
+
+            
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            
+            tg.sendData(JSON.stringify({
+                action: "message",
+                text: text
+            }));
+
+            input.value = '';
+        }
+
+      
+        document.getElementById('main-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSend();
+        });
+    </script>
+</body>
+</html>
