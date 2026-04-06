@@ -3,179 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Support Pro Exchange Style</title>
+    <title>120DIVISION PLATFORM</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-        
-        body { 
-            background-color: #FFFFFF; 
-            color: #1E2329; 
-            font-family: 'Inter', sans-serif; 
-            overflow: hidden; 
-        }
-
-      
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-thumb { background: #EAECEF; border-radius: 10px; }
-
-        .tab-active { 
-            color: #00BAF2; 
-            border-bottom: 2px solid #00BAF2; 
-        }
-
-        .chat-bubble-user { 
-            background-color: #00BAF2; 
-            color: #FFFFFF; 
-            border-radius: 12px 12px 2px 12px; 
-        }
-
-        .chat-bubble-admin { 
-            background-color: #F5F5F5; 
-            color: #1E2329; 
-            border-radius: 12px 12px 12px 2px; 
-            border: 1px solid #EAECEF;
-        }
-
-        .input-shadow {
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;900&display=swap');
+        body { background-color: #000000; color: #FFFFFF; font-family: 'Inter', sans-serif; overflow: hidden; }
+        .sidebar { transition: transform 0.3s ease; z-index: 100; background: #050505; }
+        .glass { background: #0A0A0A; border: 1px solid #1A1A1A; }
+        .active-section { display: block !important; }
+        .chat-msg { max-width: 85%; padding: 12px; border-radius: 4px; font-weight: 800; margin-bottom: 8px; text-transform: uppercase; border: 1px solid #1A1A1A; }
+        .msg-user { background: #FFFFFF; color: #000; align-self: flex-end; }
+        .msg-admin { background: #1A1A1A; color: #FFF; align-self: flex-start; }
+        .dropdown { display: none; position: absolute; right: 0; top: 30px; background: #111; border: 1px solid #333; z-index: 50; width: 180px; }
+        .dropdown button { width: 100%; text-align: left; padding: 12px; font-size: 10px; font-weight: 900; border-bottom: 1px solid #222; }
+        .dropdown button:hover { background: #1A1A1A; }
     </style>
 </head>
 <body class="flex flex-col h-screen">
 
-   
-    <nav class="flex justify-around border-b border-gray-100 bg-white sticky top-0 z-50">
-        <button onclick="switchTab('chat')" id="tab-chat" class="py-4 text-sm font-semibold flex-1 tab-active transition-all">
-            ПОДДЕРЖКА
-        </button>
-        <button onclick="switchTab('profile')" id="tab-profile" class="py-4 text-sm font-semibold flex-1 text-gray-400 transition-all">
-            ПРОФИЛЬ
-        </button>
-    </nav>
+    <!-- SIDEBAR -->
+    <div id="sidebar" class="sidebar fixed inset-y-0 left-0 w-72 border-r border-gray-900 transform -translate-x-full">
+        <div class="p-6 border-b border-gray-900 flex flex-col items-center">
+            <img src="logo.png" alt="120DIVISION" class="w-40 mb-4">
+            <button onclick="toggleSidebar()" class="absolute top-4 right-4 text-gray-500"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <nav class="mt-4">
+            <button onclick="switchSection('profile')" class="w-full p-5 font-black text-left flex items-center hover:bg-[#0A0A0A]">
+                <i class="fa-solid fa-user-shield mr-4 text-gray-500"></i> ПРОФИЛЬ
+            </button>
+            <button onclick="switchSection('shop')" class="w-full p-5 font-black text-left flex items-center hover:bg-[#0A0A0A]">
+                <i class="fa-solid fa-box-open mr-4 text-gray-500"></i> МАГАЗИН
+            </button>
+            <button onclick="switchSection('support')" class="w-full p-5 font-black text-left flex items-center hover:bg-[#0A0A0A]">
+                <i class="fa-solid fa-headset mr-4 text-gray-500"></i> ПОДДЕРЖКА
+            </button>
+            <div id="admin-zone" class="hidden border-t border-gray-900 mt-4">
+                <p class="p-5 text-[10px] text-gray-600 font-black tracking-[3px]">АДМИН-ПАНЕЛЬ</p>
+                <button onclick="switchSection('admin')" class="w-full p-5 font-black text-left flex items-center text-red-600 hover:bg-[#0A0A0A]">
+                    <i class="fa-solid fa-list-check mr-4"></i> АКТИВНЫЕ ЗАЯВКИ
+                </button>
+            </div>
+        </nav>
+    </div>
 
-   
-    <main class="flex-1 overflow-hidden relative">
+    <!-- HEADER -->
+    <header class="p-5 border-b border-gray-900 flex items-center justify-between bg-black z-40">
+        <button onclick="toggleSidebar()" class="text-2xl"><i class="fa-solid fa-bars-staggered"></i></button>
+        <img src="logo.png" alt="120DIVISION" class="h-6">
+        <div class="w-8 h-8 rounded bg-gray-900 border border-gray-800 flex items-center justify-center text-[10px] font-black text-white" id="h-avatar">?</div>
+    </header>
+
+    <!-- CONTENT -->
+    <main class="flex-1 overflow-y-auto relative">
         
-      
-        <section id="section-chat" class="h-full flex flex-col p-4 overflow-y-auto pb-24 space-y-4">
-            <div class="chat-bubble-admin self-start max-w-[85%] p-4 text-sm shadow-sm">
-                <b>Здравствуйте! Опишите ваш вопрос или проблему. Мы ответим в ближайшее время.</b>
+        <!-- PROFILE -->
+        <section id="section-profile" class="p-6 space-y-6 active-section">
+            <div class="glass p-10 rounded-none border border-gray-900 text-center relative overflow-hidden">
+                <div class="text-[60px] font-black opacity-5 absolute -bottom-4 -right-4">120</div>
+                <h2 id="p-name" class="text-2xl font-black italic tracking-tighter">ЗАГРУЗКА...</h2>
+                <p id="p-id" class="text-gray-600 font-bold mt-2 tracking-widest text-xs">ID: 00000000</p>
+                <div class="mt-6 inline-block bg-white text-black px-4 py-1 text-[10px] font-black uppercase">ВЕРИФИЦИРОВАН</div>
             </div>
-          
         </section>
 
-       
-        <section id="section-profile" class="hidden h-full p-6 bg-gray-50 space-y-6">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center text-center">
-                <div class="w-20 h-20 bg-blue-100 text-blue-500 rounded-full flex items-center justify-center text-2xl font-bold mb-4">
-                    <span id="user-initials">U</span>
-                </div>
-                <h2 class="text-xl font-bold uppercase" id="user-name">User Name</h2>
-                <p class="text-gray-400 text-xs mt-1 font-medium uppercase tracking-wider" id="user-id">ID: 00000000</p>
-            </div>
-
-            <div class="space-y-3">
-                <div class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center">
-                    <span class="text-sm font-medium text-gray-500">СТАТУС ТИКЕТА</span>
-                    <span class="text-xs font-bold text-green-500 px-2 py-1 bg-green-50 rounded uppercase">Активен</span>
-                </div>
-                <div class="bg-white p-4 rounded-xl border border-gray-100 flex justify-between items-center">
-                    <span class="text-sm font-medium text-gray-500">СРЕДНЕЕ ВРЕМЯ ОТВЕТА</span>
-                    <span class="text-xs font-bold text-gray-800 uppercase">~15 МИНУТ</span>
+        <!-- SHOP -->
+        <section id="section-shop" class="hidden p-4 grid grid-cols-1 gap-4">
+            <div class="glass p-4 rounded-none flex items-center space-x-4">
+                <div class="w-24 h-24 bg-gray-900 flex-shrink-0 border border-gray-800 flex items-center justify-center font-black">IMG</div>
+                <div class="flex-1">
+                    <h3 class="font-black text-sm italic">PRODUCT_NAME_01</h3>
+                    <p class="text-xs text-gray-500 mt-1 uppercase font-bold">ОПИСАНИЕ ТОВАРА, ХАРАКТЕРИСТИКИ И РАЗМЕРЫ.</p>
+                    <div class="mt-3 flex items-center justify-between">
+                        <span class="font-black text-white">5000 RUB</span>
+                        <button class="bg-white text-black px-4 py-2 text-[10px] font-black">КУПИТЬ</button>
+                    </div>
                 </div>
             </div>
         </section>
 
+        <!-- SUPPORT -->
+        <section id="section-support" class="hidden h-full flex flex-col">
+            <div id="chat-box" class="flex-1 p-5 overflow-y-auto flex flex-col pb-32">
+                <!-- MESSAGES -->
+            </div>
+            <div class="fixed bottom-0 w-full p-4 bg-black border-t border-gray-900 flex items-center space-x-3">
+                <label class="text-gray-500 px-2"><i class="fa-solid fa-plus"></i><input type="file" class="hidden"></label>
+                <input type="text" id="chat-in" placeholder="ОПИШИТЕ ВАШ ЗАПРОС..." class="flex-1 bg-[#0A0A0A] border border-gray-800 p-3 text-xs font-black focus:outline-none">
+<button onclick="sendMsg()" class="bg-white text-black p-3 px-5 text-[10px] font-black">SEND</button>
+            </div>
+        </section>
+
+        <!-- ADMIN (TICKETS) -->
+        <section id="section-admin" class="hidden p-6 space-y-4">
+            <div id="admin-list" class="space-y-4">
+                <!-- TICKET ITEM -->
+                <div class="glass p-5 relative border-l-2 border-red-600">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-black text-xs">USER_NAME_TEST</h4>
+                            <p class="text-[10px] text-gray-500 font-bold mt-1 uppercase italic">ПРОБЛЕМА С ДОСТУПОМ К ЛИЧНОМУ КАБИНЕТУ...</p>
+                        </div>
+                        <div class="relative">
+                            <button onclick="toggleDrop('drop1')" class="p-2"><i class="fa-solid fa-ellipsis-vertical text-gray-500"></i></button>
+                            <div id="drop1" class="dropdown">
+                                <button onclick="adminAction('CLOSE', '1')" class="text-white uppercase"><i class="fa-solid fa-check mr-2 text-green-500"></i> ЗАКРЫТЬ ЗАЯВКУ</button>
+                                <button onclick="adminAction('CODER', '1')" class="text-white uppercase"><i class="fa-solid fa-code mr-2 text-blue-500"></i> ПЕРЕДАТЬ КОДЕРУ</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
-    <footer id="input-footer" class="bg-white p-4 input-shadow border-t border-gray-100 fixed bottom-0 w-full">
-        <div class="flex items-center space-x-3">
-            <button class="w-10 h-10 flex items-center justify-center text-gray-400 hover:text-blue-500 transition-colors">
-                <i class="fa-solid fa-plus text-xl"></i>
-            </button>
-            <div class="flex-1 relative">
-                <input type="text" id="main-input" placeholder="Введите ваше сообщение..." 
-                       class="w-full bg-gray-100 rounded-xl py-3 px-4 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400 transition-all">
-            </div>
-            <button onclick="handleSend()" class="w-10 h-10 flex items-center justify-center text-blue-500 hover:scale-110 transition-transform">
-                <i class="fa-solid fa-paper-plane text-xl"></i>
-            </button>
-        </div>
-    </footer>
+    <!-- FLOATING CHAT BTN -->
+    <button onclick="switchSection('support')" class="fixed bottom-24 right-6 w-12 h-12 bg-white text-black flex items-center justify-center shadow-2xl z-30">
+        <i class="fa-solid fa-comment"></i>
+    </button>
 
     <script>
         const tg = window.Telegram.WebApp;
         tg.expand();
-        tg.ready();
+        
+        // --- НАСТРОЙКИ ДОСТУПА ---
+        const ADMIN_IDS = [8594633841, 239481753,842499549,791080626]; 
+        const CODER_ID = 8594633841;             
 
-       
-        const user = tg.initDataUnsafe.user;
-        if (user) {
-            document.getElementById('user-name').innerText = user.first_name + (user.last_name ? ' ' + user.last_name : '');
-            document.getElementById('user-id').innerText = 'ID: ' + user.id;
-            document.getElementById('user-initials').innerText = user.first_name.charAt(0).toUpperCase();
-        }
+        const user = tg.initDataUnsafe?.user;
 
-        // Переключение табов
-        function switchTab(tab) {
-            const chatSec = document.getElementById('section-chat');
-            const profSec = document.getElementById('section-profile');
-            const chatTab = document.getElementById('tab-chat');
-            const profTab = document.getElementById('tab-profile');
-            const footer = document.getElementById('input-footer');
-
-            if (tab === 'chat') {
-                chatSec.classList.remove('hidden');
-                profSec.classList.add('hidden');
-                chatTab.classList.add('tab-active');
-                chatTab.classList.remove('text-gray-400');
-                profTab.classList.add('text-gray-400');
-                profTab.classList.re
-move('tab-active');
-                footer.classList.remove('hidden');
-            } else {
-                chatSec.classList.add('hidden');
-                profSec.classList.remove('hidden');
-                profTab.classList.add('tab-active');
-                profTab.classList.remove('text-gray-400');
-                chatTab.classList.add('text-gray-400');
-                chatTab.classList.remove('tab-active');
-                footer.classList.add('hidden');
+        if(user) {
+            document.getElementById('p-name').innerText = (user.first_name + (user.last_name ? ' ' + user.last_name : '')).toUpperCase();
+            document.getElementById('p-id').innerText = 'ID: ' + user.id;
+            document.getElementById('h-avatar').innerText = user.first_name[0].toUpperCase();
+            
+            if(ADMIN_IDS.includes(user.id) || user.id === CODER_ID) {
+                document.getElementById('admin-zone').classList.remove('hidden');
             }
         }
 
-    
-        function handleSend() {
-            const input = document.getElementById('main-input');
-            const text = input.value.trim();
-            if (!text) return;
-
-          
-            const chatBox = document.getElementById('section-chat');
-            const newMsg = document.createElement('div');
-            newMsg.className = 'chat-bubble-user self-end max-w-[85%] p-4 text-sm shadow-sm';
-            newMsg.innerHTML = `<b>${text}</b>`;
-            chatBox.appendChild(newMsg);
-
-            
-            chatBox.scrollTop = chatBox.scrollHeight;
-
-            
-            tg.sendData(JSON.stringify({
-                action: "message",
-                text: text
-            }));
-
-            input.value = '';
+        function toggleSidebar() {
+            const sb = document.getElementById('sidebar');
+            sb.style.transform = sb.style.transform === 'translateX(0%)' ? 'translateX(-100%)' : 'translateX(0%)';
         }
 
-      
-        document.getElementById('main-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleSend();
-        });
+        function switchSection(id) {
+            ['profile', 'shop', 'support', 'admin'].forEach(s => {
+                document.getElementById('section-' + s).classList.toggle('hidden', s !== id);
+            });
+            toggleSidebar();
+            if(id === 'support') renderChat();
+        }
+
+        function toggleDrop(id) {
+            const d = document.getElementById(id);
+            d.style.display = d.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function sendMsg() {
+            const cin = document.getElementById('chat-in');
+            if(!cin.value) return;
+            const history = JSON.parse(localStorage.getItem('chat_120') || '[]');
+            history.push({ r: 'u', t: cin.value.toUpperCase() });
+            localStorage.setItem('chat_120', JSON.stringify(history));
+            tg.sendData(JSON.stringify({ a: "MSG", text: cin.value }));
+            cin.value = '';
+            renderChat();
+        }
+
+        function renderChat() {
+            const box = document.getElementById('chat-box');
+            const history = JSON.parse(localStorage.getItem('chat_120') || '[]');
+            box.innerHTML = '';
+            history.forEach(m => {
+                const d = document.createElement('div');
+                d.className = `chat-msg ${m.r === 'u' ? 'msg-user' : 'msg-admin'}`;
+                d.innerText = m.t;
+                box.appendChild(d);
+            });
+            box.scrollTop = box.scrollHeight;
+        }
+
+        function adminAction(type, id) {
+            tg.showConfirm(`ПОДТВЕРДИТЕ ДЕЙСТВИЕ: ${type}`, (ok) => {
+                if(ok) {
+                    tg.sendData(JSON.stringify({ a: "ADMIN_ACTION", type: type, id: id }));
+                    tg.close();
+                }
+            });
+        }
+
+        // Закрытие дропдаунов при клике
+        window.onclick = function(event) {
+            if (!event.target.matches('.fa-ellipsis-vertical')) {
+                const drops = document.getElementsByClassName("dropdown");
+                for (let i = 0; i < drops.length; i++) {
+                    drops[i].style.display = "none";
+                }
+            }
+        }
     </script>
 </body>
 </html>
