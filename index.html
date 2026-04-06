@@ -292,3 +292,171 @@
     </script>
 </body>
 </html>
+<button id="adminBtn" onclick="nav('admin')" class="hidden"><i class="fa fa-shield"></i></button>
+</nav>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<script>
+
+// STATE
+const DB={
+  get:(k)=>JSON.parse(localStorage.getItem(k)||"[]"),
+  set:(k,v)=>localStorage.setItem(k,JSON.stringify(v))
+}
+
+// USER
+const user={id:1,name:"User"};
+avatar.innerText=user.name[0];
+pAvatar.innerText=user.name[0];
+name.innerText=user.name;
+
+// ADMIN
+const ADMIN=[1];
+if(ADMIN.includes(user.id)){
+ adminBtn.classList.remove("hidden");
+ addBtn.classList.remove("hidden");
+}
+
+// NAV
+function nav(id){
+document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+}
+
+// THEME
+function toggleTheme(){
+let t=document.body.dataset.theme==="dark"?"light":"dark";
+document.body.dataset.theme=t;
+localStorage.setItem("theme",t);
+}
+document.body.dataset.theme=localStorage.getItem("theme")||"dark";
+
+// TOAST
+function toast(t){
+let el=document.createElement("div");
+el.className="toast";
+el.innerText=t;
+document.body.append(el);
+setTimeout(()=>el.remove(),2000);
+}
+
+// PRODUCTS
+let products=DB.get("products");
+
+function renderProducts(){
+productsEl.innerHTML="";
+products.forEach((p,i)=>{
+productsEl.innerHTML+=`
+<div class="neu p-4">
+<div class="swiper">
+<div class="swiper-wrapper">
+${p.images.map(img=>`<div class="swiper-slide"><img src="${img}"/></div>`).join("")}
+</div>
+</div>
+<h3>${p.name}</h3>
+<p>${p.price}₽</p>
+<button onclick="addCart(${i})">Купить</button>
+</div>`;
+});
+}
+const productsEl=document.getElementById("products");
+renderProducts();
+
+addBtn.onclick=()=>{
+let name=prompt("Название");
+let price=prompt("Цена");
+let imgs=prompt("URL через ,").split(",");
+products.push({name,price,images:imgs});
+DB.set("products",products);
+renderProducts();
+toast("Добавлено");
+}
+
+// CART
+let cart=DB.get("cart");
+
+function addCart(i){
+cart.push(products[i]);
+DB.set("cart",cart);
+renderCart();
+toast("В корзине");
+}
+
+function renderCart(){
+cartEl.innerHTML="";
+cart.forEach((c,i)=>{
+cartEl.innerHTML+=`<div>${c.name} <button onclick="delCart(${i})">x</button></div>`;
+});
+}
+function delCart(i){
+cart.splice(i,1);
+DB.set("cart",cart);
+renderCart();
+}
+const cartEl=document.getElementById("cart");
+renderCart();
+
+// CHAT USER
+let chats=DB.get("chats");
+
+function sendMsg(){
+let text=msg.value;
+if(!text)return;
+chats.push({user:user.id,text,role:"user"});
+DB.set("chats",chats);
+msg.value="";
+renderChat();
+}
+
+function renderChat(){
+chatBox.innerHTML="";
+chats.filter(c=>c.user==user.id).forEach(m=>{
+chatBox.innerHTML+=`<div class="neu p-2">${m.text}</div>`;
+});
+}
+renderChat();
+
+// ADMIN CHAT
+let currentUser=null;
+
+function renderDialogs(){
+dialogs.innerHTML="";
+let users=[...new Set(chats.map(c=>c.user))];
+users.forEach(u=>{
+dialogs.innerHTML+=`<div onclick="openChat(${u})" class="neu p-3">User ${u}</div>`;
+});
+}
+renderDialogs();
+
+function openChat(u){
+currentUser=u;
+adminChat.classList.remove("hidden");
+renderAdminChat();
+}
+
+function renderAdminChat(){
+adminMsgs.innerHTML="";
+chats.filter(c=>c.user==currentUser).forEach(m=>{
+adminMsgs.innerHTML+=`
+<div class="${m.role=='admin'?'text-red-400':''}">
+${m.text}
+</div>`;
+});
+}
+
+function adminSend(){
+let text=adminInput.value;
+chats.push({user:currentUser,text,role:"admin"});
+DB.set("chats",chats);
+adminInput.value="";
+renderAdminChat();
+}
+
+// INIT SWIPER
+new Swiper(".swiper");
+
+</script>
+
+</body>
+</html>
